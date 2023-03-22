@@ -1,0 +1,60 @@
+---
+const { json } = Astro.props;
+let machines: { [x: string]: number } = {};
+
+for (const day of json.days) {
+  if (day.machines.length) {
+    if (!machines[day.machines[0].name]) machines[day.machines[0].name] = 0;
+
+    machines[day.machines[0].name] += Math.round(day.machines[0].total_seconds);
+  }
+}
+machines = Object.entries(machines)
+  .sort((a, b) => a[1] - b[1])
+  .reduce(
+    (_sortedObj, [k, v]) => ({
+      ..._sortedObj,
+      [k]: v,
+    }),
+    {}
+  );
+---
+<h1>Machines</h1>
+<canvas class="machines-chart"></canvas>
+<script
+  type="module"
+  set:html={`
+  console.log(Chart, Chart.defaults)
+    const langs = { 
+        labels: ${JSON.stringify(Object.keys(machines))},
+        datasets: [
+            {
+                borderWidth: 0, 
+                data: ${JSON.stringify(Object.values(machines).map(x=>Math.round(x/60/60/24*100)/100))},
+                hoverOffset: 20,
+                backgroundColor: [${Array(Object.keys(machines).length).fill(0).map((el,i)=>`"hsl(${i*(360/(13/8))}, 50%, 50%)"`)}],
+                offset: 4,
+            }
+        ],
+    }
+
+    const chart = new Chart(document.querySelector(".machines-chart").getContext("2d"), {
+        data: langs,
+        type: "pie",
+        options: {
+          plugins: {
+            tooltip: {
+              enabled: true,
+              callbacks: {
+                title: () => "",
+                label: (item) => {
+                  return item.label + ": " + item.parsed + ' hours';
+                }
+              },
+              caretSize: 0,
+            }
+          }
+        }
+    })
+`}
+></script>

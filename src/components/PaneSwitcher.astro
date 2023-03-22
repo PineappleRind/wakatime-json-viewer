@@ -1,0 +1,81 @@
+---
+import PanePanel from "./PanePanel.astro";
+const { json } = Astro.props;
+---
+
+<div class="pane-triggers">
+  <div class="pane-trigger active" data-id="alltime">All-time Stats</div>
+  <div class="pane-trigger" data-id="machines">Machines</div>
+  <div class="pane-trigger" data-id="languages">Languages</div>
+</div>
+<div class="pane-panels">
+  <PanePanel json={json} inView id="alltime" />
+  <PanePanel json={json} id="machines" />
+  <PanePanel json={json} id="languages" />
+</div>
+
+<script>
+  const $ = document.querySelector.bind(document);
+  let previousPane = "alltime",
+    triggers: HTMLElement[] = Array.from(
+      document.querySelectorAll(".pane-trigger")
+    ) as HTMLElement[];
+
+  for (const trigger of triggers) {
+    trigger.addEventListener("click", async ({ target }) => {
+      let toSwitchTo = (target as HTMLElement)?.dataset?.id as string;
+      $(`.pane-trigger[data-id=${previousPane}]`)?.classList.remove("active");
+      $(`.pane-trigger[data-id=${toSwitchTo}]`)?.classList.add("active");
+
+      await showPane(toSwitchTo);
+      previousPane = toSwitchTo;
+    });
+  }
+
+  const delay = (time: number) =>
+    new Promise((resolve, reject) => setTimeout(resolve, time));
+
+  async function showPane(pane: string) {
+    let prevPane = $(`.pane-panel[data-id=${previousPane}]`),
+      nextPane = $(`.pane-panel[data-id=${pane}]`);
+    if (!prevPane || !nextPane)
+      throw new Error(`One of [${pane}, ${nextPane}] is an invalid pane`);
+    prevPane.classList.add("out-of-view");
+
+    nextPane.classList.remove("out-of-view");
+  }
+</script>
+
+<style>
+  .pane-triggers {
+    padding: 7px;
+    background: var(--background-l2);
+    border-radius: 40px;
+    display: flex;
+    width: fit-content;
+  }
+
+  .pane-trigger {
+    padding: 10px 23px;
+    border-radius: 40px;
+    color: var(--text-quiet);
+    cursor: pointer;
+    width: 150px;
+    text-align: center;
+    transition: 0.2s;
+  }
+
+  .pane-trigger.active {
+    background: var(--background-l3);
+    color: var(--text-medium);
+  }
+
+  .pane-panels {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: max-content;
+    top: 20px;
+  }
+</style>

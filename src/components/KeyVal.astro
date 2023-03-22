@@ -1,0 +1,33 @@
+---
+const { key, value } = Astro.props;
+---
+
+<div class="key-value">
+    <b class="key">{key}</b><span class="value">{value}</span>
+</div>
+
+<style>
+    .key {
+        color: var(--text-quiet);
+        font-weight: 300;
+        position: relative;
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+        padding-right: 10px;
+        margin-right: 4px;
+    }
+    .key::after {
+        height: 5px;
+        right:0;
+        width: 5px;
+        border-radius: 50%;
+        background: radial-gradient(rgba(0,0,0,0.4),transparent);
+        content: "";
+        display: inline-block;
+        position: absolute;
+    }
+    span {
+        color: var(--text-medium);
+    }
+</style>

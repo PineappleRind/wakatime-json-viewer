@@ -1,0 +1,39 @@
+---
+import panels from "../panels/index";
+const { json, inView } = Astro.props;
+const id: string = Astro.props.id;
+
+if (!(id in panels)) return console.error("Invalid!");
+
+const Panel = panels[id as keyof typeof panels];
+---
+
+<div class:list={["pane-panel", !inView && "out-of-view"]} data-id={id}>
+  {<Panel json={json} /> || <p>Pane not found</p>}
+</div>
+
+<style>
+  .pane-panel {
+    position: absolute;
+    top: 0;
+    padding: 20px;
+    opacity: 1;
+    transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1) all, 0.1s linear opacity;
+    min-width: 400px;
+    width: max-content;
+    background: var(--background-l2);
+    border-radius: 20px;
+    color: var(--text-quiet);
+  }
+
+  .pane-panel.out-of-view {
+    scale: 0.96;
+    translate: 0 -7px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .pane-panel :global(h1) {
+    color: var(--text-medium);
+  }
+</style>

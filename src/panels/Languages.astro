@@ -1,0 +1,82 @@
+---
+const { json } = Astro.props;
+const languageColors = await(
+  await fetch("http://localhost:3000/data/languages.json")
+).json();
+
+let totals: { [x: string]: number } = {};
+for (const day of json.days) {
+  for (const language of day.languages) {
+    if (!totals[language.name]) totals[language.name] = 0;
+    totals[language.name] += Math.round(language.total_seconds * 10) / 10;
+  }
+}
+
+// Coalesce into "Other"
+let totalSeconds = Object.entries(totals).reduce((acc, [s, n]) => acc + n, 0);
+
+let totalsWithOther: { [x: string]: number } = {};
+for (const [lang, secs] of Object.entries(totals)) {
+  if ((secs / totalSeconds) * 100 < 0.1) {
+    if (!totalsWithOther["Other"]) totalsWithOther["Other"] = 0;
+    totalsWithOther["Other"] += secs;
+  } else {
+    totalsWithOther[lang] = secs;
+  }
+}
+
+let arrayTotals: [string, number][] = Object.entries(totalsWithOther).sort(
+  ([_, an], [__, bn]) => {
+    return an > bn ? 1 : -1;
+  }
+).reverse();
+
+const langs: string[] = arrayTotals.map(([s, n]) => s);
+const timeHours: number[] = arrayTotals.map(
+  ([s, n]) => Math.round(n / 60 / 60 * 100) / 100
+);
+const langColors: string[] = langs.map((lang) => languageColors[lang] || "#777777");
+---
+
+<h1>Languages</h1>
+<canvas width="500" class="languages-chart"></canvas>
+
+
+<script
+  type="module"
+  set:html={`
+  console.log(Chart, Chart.defaults)
+    const langs = { 
+        labels: ${JSON.stringify(langs)},
+        datasets: [
+            {
+                borderWidth: 0, 
+                data: ${JSON.stringify(timeHours)},
+                backgroundColor: ${JSON.stringify(langColors)},
+                hoverOffset: 20,
+            }
+        ],
+    }
+
+    const chart = new Chart(document.querySelector(".languages-chart").getContext("2d"), {
+        data: langs,
+        type: "pie",
+        options: {
+          plugins: {
+            tooltip: {
+              enabled: true,
+              intersect: false,
+              mode: 'point',
+              callbacks: {
+                title: () => "",
+                label: (item) => {
+                  return item.label + ": " + item.parsed + ' hours';
+                }
+              },
+              caretSize: 0,
+            }
+          }
+        }
+    })
+`}
+></script>

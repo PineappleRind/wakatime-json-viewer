@@ -1,0 +1,67 @@
+---
+const { json, forHumans, interval } = Astro.props;
+
+function chunkAverage(arr: any[], len: number) {
+  var chunks = [];
+  var i = 0;
+  var n = arr.length;
+
+  var chunk;
+
+  while (i < n) {
+    chunk = arr.slice(i, (i += len));
+    chunks.push(chunk.reduce((s, n) => s + n));
+  }
+
+  return chunks;
+}
+
+let days = [];
+let totals = [];
+
+for (const day of json.days) {
+  days.push(day.date);
+  totals.push(day.grand_total.total_seconds / 60 / 60);
+}
+
+// By week
+days = days.reduce((all, one, i) => {
+  const chunkLength = Math.floor(i / interval);
+  all[chunkLength] = one;
+  return all;
+}, []);
+totals = chunkAverage(totals, interval);
+console.log(days, totals);
+---
+
+<canvas width="600" class="alltime-chart"></canvas>
+
+<script
+  type="module"
+  set:html={`
+    const ctx = document.querySelector(".alltime-chart").getContext("2d");
+    let gradient = ctx.createLinearGradient(0, -100, 0, 300);
+    gradient.addColorStop(0, 'rgba(0, 140,255,1)');   
+    gradient.addColorStop(1, 'rgba(0,140,255,0)');
+
+    const data = { 
+        labels: ["${days.join('", "')}"],
+        datasets: [
+            {
+                data: ${JSON.stringify(totals)},
+                cubicInterpolationMode: 'monotone',
+                tension: 0,
+                fill: "start",
+                label: "Hours",
+                backgroundColor: gradient,
+                borderColor: "rgba(0, 140,255)",
+            }
+        ],
+    }
+    
+    const chart = new Chart(ctx, {
+        data,
+        type: "line",
+    })
+`}
+></script>

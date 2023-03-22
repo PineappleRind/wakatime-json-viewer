@@ -1,0 +1,71 @@
+---
+import KeyVal from "../components/KeyVal.astro";
+import AllTimeGraph from "./AllTime/AllTimeGraph.astro";
+
+const { json } = Astro.props;
+
+/**
+ * Translates seconds into human readable format of seconds, minutes, hours, days, and years
+ *
+ * @param  {number} seconds The number of seconds to be processed
+ * @return {string}         The phrase describing the amount of time
+ */
+function forHumans(seconds: number) {
+  var levels = [
+    [Math.floor(seconds / 31536000), "years"],
+    [Math.floor((seconds % 31536000) / 86400), "days"],
+    [Math.floor(((seconds % 31536000) % 86400) / 3600), "hours"],
+    [Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), "minutes"],
+    [(((seconds % 31536000) % 86400) % 3600) % 60, "seconds"],
+  ];
+  var returntext = "";
+
+  for (var i = 0, max = levels.length; i < max; i++) {
+    if (levels[i][0] === 0) continue;
+    returntext +=
+      " " +
+      levels[i][0] +
+      " " +
+      (levels[i][0] === 1
+        ? levels[i][1].toString().substr(0, levels[i][1].toString().length - 1)
+        : levels[i][1]);
+  }
+  return returntext.trim();
+}
+
+let totalTimeSpent = 0,
+  OSes: { [x: string]: number } = {};
+for (const day of json.days) {
+  let cur = day.categories[0];
+  if (!cur) continue;
+  totalTimeSpent += cur.total_seconds;
+  // OSes
+  if (day["operating_systems"]) {
+    if (!OSes[day["operating_systems"][0].name])
+      OSes[day["operating_systems"][0].name] = 0;
+
+    OSes[day["operating_systems"][0].name] += Math.round(
+      day["operating_systems"][0].total_seconds
+    );
+  }
+  //Machines
+}
+---
+
+<h1>All-Time Statistics</h1>
+<p>since {new Date(json.range.start * 1000).toLocaleDateString()}</p>
+<br />
+<KeyVal key="Time Spent Coding" value={forHumans(Math.round(totalTimeSpent))} />
+<KeyVal
+  key="OSes"
+  value={Object.entries(OSes)
+    .map(([name, secs]) => {
+      return (
+        name + ": " + Math.round((secs / totalTimeSpent) * 1000) / 10 + "%"
+      );
+    })
+    .join(", ")}
+/>
+<br />
+<h2>All-Time Graph</h2>
+<AllTimeGraph interval={90} json={json} forHumans={forHumans}/>

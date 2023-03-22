@@ -1,0 +1,47 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PaneSwitcher from "../components/PaneSwitcher.astro";
+
+const data = await fetch("http://localhost:3000/data/wakatime.json");
+let json;
+if (data.ok) json = await data.json();
+---
+
+<Layout title="Wakatime Viewer">
+  {
+    json ? (
+      <>
+        <main>
+          <PaneSwitcher json={json} />
+        </main>
+        <footer>
+          <dim>
+            Viewing <b>{json.user.username}</b>'s data
+          </dim>
+          <br />
+          <a href="https://github.com/pineapplerind/wakatime-json-viewer">
+            How do I use this? &UpperRightArrow;
+          </a>
+        </footer>
+      </>
+    ) : (
+      <main>
+        <h1>No JSON file!</h1>
+        <p>
+          Make sure you're following{" "}
+          <a href="https://github.com/pineapplerind/wakatime-json-viewer">
+            the instructions &UpperRightArrow;
+          </a>
+        </p>
+      </main>
+    )
+  }
+</Layout>
+
+<style>
+  footer {
+    position: absolute;
+    bottom: 0;
+    padding: 20px;
+  }
+</style>

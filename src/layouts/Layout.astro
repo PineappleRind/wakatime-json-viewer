@@ -1,0 +1,88 @@
+---
+export interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  * {
+    margin: 0;
+    box-sizing: border-box;
+  }
+  :root {
+    --background-l0: #cfd6db;
+    --background-l1: #dae0e4;
+    --background-l2: #e8edf0;
+    --background-l3: #ffffff;
+    --text-quiet: rgba(0, 0, 0, 0.5);
+    --text-medium: rgba(0, 0, 0, 0.7);
+    --text-loud: rgba(0, 0, 0, 0.9);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-l0: #000000;
+      --background-l1: #101111;
+      --background-l2: #14181a;
+      --background-l3: #101c22;
+      --text-quiet: rgba(255, 255, 255, 0.5);
+      --text-medium: rgba(255, 255, 255, 0.7);
+      --text-loud: rgba(253, 253, 253, 0.9);
+    }
+  }
+  html {
+    font-family: system-ui, sans-serif;
+    background-color: var(--background-l0);
+  }
+
+  main {
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  h1 {
+    color: var(--text-loud);
+  }
+
+  p {
+    color: var(--text-medium);
+  }
+
+  dim {
+    opacity: 0.4;
+  }
+
+  a {
+    color: var(--text-medium);
+    text-underline-offset: 4px;
+    transition: 0.2s;
+    text-decoration-color: var(--text-quiet);
+  }
+
+  a:hover {
+    text-underline-offset: 6px;
+    color: var(--text-loud);
+    text-decoration-color: var(--text-medium);
+  }
+</style>
+
+<script src="https://unpkg.com/chart.js@4.1.0/dist/chart.umd.js"></script>
