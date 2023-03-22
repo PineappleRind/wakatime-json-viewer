@@ -1,6 +1,8 @@
 ---
 const { json, forHumans, interval } = Astro.props;
 
+const DEFAULT_INTERVAL = 30; // month
+
 let days = [];
 let totals: number[] = [];
 
@@ -14,7 +16,7 @@ for (const day of json.days) {
 <select id="interval-select">
   <option value="1">every day</option>
   <option value="7">every week</option>
-  <option value="30">every 30 days</option>
+  <option selected value="30">every 30 days</option>
   <option value="90">every 90 days</option>
   <option value="365">every year</option>
 </select>
@@ -76,5 +78,6 @@ for (const day of json.days) {
     document.querySelector("#interval-select").oninput = e => {
       updateInterval(e.target.value);
     }
+    updateInterval(${DEFAULT_INTERVAL})
 `}
 ></script>
