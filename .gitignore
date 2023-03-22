@@ -1,3 +1,6 @@
+# no data leaks please
+wakatime.json
+
 # build output
 dist/
 

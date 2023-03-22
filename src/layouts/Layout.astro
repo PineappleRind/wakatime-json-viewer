@@ -38,8 +38,8 @@ const { title } = Astro.props;
     :root {
       --background-l0: #000000;
       --background-l1: #101111;
-      --background-l2: #14181a;
-      --background-l3: #101c22;
+      --background-l2: #23272a;
+      --background-l3: #384043;
       --text-quiet: rgba(255, 255, 255, 0.5);
       --text-medium: rgba(255, 255, 255, 0.7);
       --text-loud: rgba(253, 253, 253, 0.9);
@@ -59,11 +59,11 @@ const { title } = Astro.props;
     padding: 20px;
   }
 
-  h1 {
+  h1, h2 {
     color: var(--text-loud);
   }
 
-  p {
+  p, dim {
     color: var(--text-medium);
   }
 
@@ -82,6 +82,14 @@ const { title } = Astro.props;
     text-underline-offset: 6px;
     color: var(--text-loud);
     text-decoration-color: var(--text-medium);
+  }
+
+  select {
+    background: var(--background-l3);
+    color: var(--text-medium);
+    padding: 4px 8px;
+    border-radius: 5px;
+    border: 0;
   }
 </style>
 
