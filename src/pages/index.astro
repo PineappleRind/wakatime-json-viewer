@@ -12,13 +12,9 @@ if (data.ok) json = await data.json();
     json ? (
       <>
         <main>
-          <PaneSwitcher json={json} />
+          <PaneSwitcher totals={totals} langs={langs} editors={editors} oses={oses} />
         </main>
         <footer>
-          <dim>
-            Viewing <b>{json.user.username}</b>'s data
-          </dim>
-          <br />
           <a href="https://github.com/pineapplerind/wakatime-json-viewer">
             How do I use this? &UpperRightArrow;
           </a>
