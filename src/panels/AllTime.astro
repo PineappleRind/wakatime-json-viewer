@@ -2,8 +2,8 @@
 import KeyVal from "../components/KeyVal.astro";
 import AllTimeGraph from "./AllTime/AllTimeGraph.astro";
 
-const { json } = Astro.props;
-
+const { embeddables } = Astro.props;
+console.log(embeddables);
 /**
  * Translates seconds into human readable format of seconds, minutes, hours, days, and years
  *
@@ -35,38 +35,28 @@ function forHumans(seconds: number) {
 
 let totalTimeSpent = 0,
   OSes: { [x: string]: number } = {};
-for (const day of json.days) {
-  let cur = day.categories[0];
+for (const day of embeddables.totals.days) {
+  let cur = day.categories?.[0];
   if (!cur) continue;
-  totalTimeSpent += cur.total_seconds;
-  // OSes
-  if (day["operating_systems"]) {
-    if (!OSes[day["operating_systems"][0].name])
-      OSes[day["operating_systems"][0].name] = 0;
-
-    OSes[day["operating_systems"][0].name] += Math.round(
-      day["operating_systems"][0].total_seconds
-    );
-  }
-  //Machines
+  totalTimeSpent += cur.total;
 }
 ---
 
 <h1>All-Time Statistics</h1>
-<p>since {new Date(json.range.start * 1000).toLocaleDateString()}</p>
+<p>since {new Date(embeddables.days?.[0].date).toLocaleDateString()}</p>
 <br />
 <KeyVal key="Time Spent Coding" value={forHumans(Math.round(totalTimeSpent))} />
 <KeyVal
-  key="OSes"
-  value={Object.entries(OSes)
-    .map(([name, secs]) => {
-      return (
-        name + ": " + Math.round((secs / totalTimeSpent) * 1000) / 10 + "%"
-      );
-    })
-    .join(", ")}
+  key="Range"
+  value={`${embeddables.totals.human_readable_range.replace(
+    "since ",
+    ""
+  )} to ${new Date(embeddables.totals.days.at(-1).date)
+    .toDateString()
+    .slice(4)}`}
 />
+
 <br />
 <h2>All-Time Graph</h2>
 
-<AllTimeGraph interval={90} json={json} forHumans={forHumans}/>
+<AllTimeGraph interval={90} json={embeddables} forHumans={forHumans} />

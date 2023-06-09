@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "wakatime-json-viewer",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -11,5 +11,8 @@
   },
   "dependencies": {
     "astro": "^2.1.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.3"
   }
 }

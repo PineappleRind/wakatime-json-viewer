@@ -6,30 +6,13 @@ const DEFAULT_INTERVAL = 30; // month
 let days = [];
 let totals: number[] = [];
 
-for (const day of json.days) {
+for (const day of json.totals.days) {
   days.push(day.date);
-  totals.push(day.grand_total.total_seconds / 60 / 60);
+  totals.push(day.total / 60 / 60);
 }
----
 
-<span>Interval:</span>
-<select id="interval-select">
-  <option value="1">every day</option>
-  <option value="7">every week</option>
-  <option selected value="30">every 30 days</option>
-  <option value="90">every 90 days</option>
-  <option value="365">every year</option>
-</select>
-<canvas width="600" class="alltime-chart"></canvas>
-<style>
-  canvas {
-    resize: both;
-  }
-</style>
-<script
-  type="module"
-  set:html={`
-    const ctx = document.querySelector(".alltime-chart").getContext("2d");
+// 😅
+const clientSide = `const ctx = document.querySelector(".alltime-chart").getContext("2d");
     let gradient = ctx.createLinearGradient(0, -100, 0, 300);
     gradient.addColorStop(0, 'rgba(0, 140,255,1)');   
     gradient.addColorStop(1, 'rgba(0,140,255,0)');
@@ -78,6 +61,22 @@ for (const day of json.days) {
     document.querySelector("#interval-select").oninput = e => {
       updateInterval(e.target.value);
     }
-    updateInterval(${DEFAULT_INTERVAL})
-`}
-></script>
+    updateInterval(${DEFAULT_INTERVAL})`;
+---
+
+<span>Interval:</span>
+<select id="interval-select">
+  <option value="1">every day</option>
+  <option value="7">every week</option>
+  <option value="14">every 14 days</option>
+  <option selected value="30">every 30 days</option>
+  <option value="90">every 90 days</option>
+  <option value="365">every year</option>
+</select>
+<canvas width="600" class="alltime-chart"></canvas>
+<style>
+  canvas {
+    resize: both;
+  }
+</style>
+<script type="module" set:html={clientSide} />

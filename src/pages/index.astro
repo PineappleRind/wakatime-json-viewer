@@ -2,17 +2,41 @@
 import Layout from "../layouts/Layout.astro";
 import PaneSwitcher from "../components/PaneSwitcher.astro";
 
-const data = await fetch("http://localhost:3000/data/wakatime.json");
-let json;
-if (data.ok) json = await data.json();
+const req = await fetch("http://localhost:3000/config.json");
+const embeddableURLs: {
+  totals: string;
+  oses: string;
+  langs: string;
+  editors: string;
+} = await req.json();
+let reqs = [],
+  map = [];
+
+for (const url in embeddableURLs) {
+  map.push(url);
+  reqs.push(async () => {
+    let d = await fetch(embeddableURLs[url as keyof typeof embeddableURLs]);
+    return await d.json();
+  });
+}
+
+reqs = await Promise.allSettled(reqs.map(async (r) => await r()));
+let embeddables: { [x: string]: any } = {};
+
+for (const [i, result] of reqs.entries()) {
+  if (result.status === "rejected") throw new Error("Could not fetch! :(");
+  embeddables[map[i]] = result.value;
+}
+
+//totals={totals} langs={langs} editors={editors} oses={oses}
 ---
 
 <Layout title="Wakatime Viewer">
   {
-    json ? (
+    embeddableURLs ? (
       <>
         <main>
-          <PaneSwitcher totals={totals} langs={langs} editors={editors} oses={oses} />
+          <PaneSwitcher {embeddables} />
         </main>
         <footer>
           <a href="https://github.com/pineapplerind/wakatime-json-viewer">
@@ -22,7 +46,7 @@ if (data.ok) json = await data.json();
       </>
     ) : (
       <main>
-        <h1>No JSON file!</h1>
+        <h1>No config file!</h1>
         <p>
           Make sure you're following{" "}
           <a href="https://github.com/pineapplerind/wakatime-json-viewer">

@@ -1,17 +1,15 @@
 ---
 import PanePanel from "./PanePanel.astro";
-const { json } = Astro.props;
+const { embeddables } = Astro.props;
 ---
 
 <div class="pane-triggers">
   <div class="pane-trigger active" data-id="alltime">All-time Stats</div>
-  <div class="pane-trigger" data-id="machines">Machines</div>
   <div class="pane-trigger" data-id="languages">Languages</div>
 </div>
 <div class="pane-panels">
-  <PanePanel json={json} inView id="alltime" />
-  <PanePanel json={json} id="machines" />
-  <PanePanel json={json} id="languages" />
+  <PanePanel embeddables={embeddables} inView id="alltime" />
+  <PanePanel embeddables={embeddables} id="languages" />
 </div>
 
 <script>
