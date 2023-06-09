@@ -1,6 +1,6 @@
 ---
 import panels from "../panels/index";
-const { json, inView } = Astro.props;
+const { embeddables, inView } = Astro.props;
 const id: string = Astro.props.id;
 
 if (!(id in panels)) return console.error("Invalid!");
@@ -9,7 +9,7 @@ const Panel = panels[id as keyof typeof panels];
 ---
 
 <div class:list={["pane-panel", !inView && "out-of-view"]} data-id={id}>
-  {<Panel json={json} /> || <p>Pane not found</p>}
+  {<Panel embeddables={embeddables} /> || <p>Pane not found</p>}
 </div>
 
 <style>

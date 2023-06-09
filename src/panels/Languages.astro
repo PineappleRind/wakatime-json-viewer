@@ -1,46 +1,38 @@
 ---
-const { json } = Astro.props;
-const languageColors = await(
-  await fetch("http://localhost:3000/data/languages.json")
-).json();
-
-let totals: { [x: string]: number } = {};
-for (const day of json.days) {
-  for (const language of day.languages) {
-    if (!totals[language.name]) totals[language.name] = 0;
-    totals[language.name] += Math.round(language.total_seconds * 10) / 10;
-  }
-}
-
-// Coalesce into "Other"
-let totalSeconds = Object.entries(totals).reduce((acc, [s, n]) => acc + n, 0);
-
-let totalsWithOther: { [x: string]: number } = {};
-for (const [lang, secs] of Object.entries(totals)) {
-  if ((secs / totalSeconds) * 100 < 0.1) {
-    if (!totalsWithOther["Other"]) totalsWithOther["Other"] = 0;
-    totalsWithOther["Other"] += secs;
-  } else {
-    totalsWithOther[lang] = secs;
-  }
-}
-
-let arrayTotals: [string, number][] = Object.entries(totalsWithOther).sort(
-  ([_, an], [__, bn]) => {
-    return an > bn ? 1 : -1;
-  }
-).reverse();
-
-const langs: string[] = arrayTotals.map(([s, n]) => s);
-const timeHours: number[] = arrayTotals.map(
-  ([s, n]) => Math.round(n / 60 / 60 * 100) / 100
+const { embeddables } = Astro.props;
+type Language = {
+  name: string;
+  percent: number;
+  color: string;
+};
+let { data }: { data: Language[] } = embeddables.langs;
+// coalesce data into Other
+const otherThreshold = 0.3;
+const breakpointIndex = data.findIndex((l) => l.percent < otherThreshold);
+data.splice(breakpointIndex);
+const totalPercent = data.reduce(
+  (acc: number, cur: Language) => (acc += cur.percent),
+  0
 );
-const langColors: string[] = langs.map((lang) => languageColors[lang] || "#777777");
+
+data.splice(
+  data.findIndex((l) => l.name === "Other"),
+  1
+);
+
+data.push({
+  name: "Other",
+  color: "#16ce40",
+  percent: 100 - totalPercent,
+});
+data.sort((a, b) => (a.percent < b.percent ? 1 : -1));
+const langs = data.map((l: Language) => l.name);
+const colors = data.map((l: Language) => l.color);
+const percents = data.map((l: Language) => l.percent);
 ---
 
 <h1>Languages</h1>
 <canvas width="500" class="languages-chart"></canvas>
-
 
 <script
   type="module"
@@ -51,8 +43,8 @@ const langColors: string[] = langs.map((lang) => languageColors[lang] || "#77777
         datasets: [
             {
                 borderWidth: 0, 
-                data: ${JSON.stringify(timeHours)},
-                backgroundColor: ${JSON.stringify(langColors)},
+                data: ${JSON.stringify(percents)},
+                backgroundColor: ${JSON.stringify(colors)},
                 hoverOffset: 20,
             }
         ],
@@ -70,7 +62,7 @@ const langColors: string[] = langs.map((lang) => languageColors[lang] || "#77777
               callbacks: {
                 title: () => "",
                 label: (item) => {
-                  return item.label + ": " + item.parsed + ' hours';
+                  return item.label + ": " + item.parsed + '%';
                 }
               },
               caretSize: 0,
@@ -79,4 +71,4 @@ const langColors: string[] = langs.map((lang) => languageColors[lang] || "#77777
         }
     })
 `}
-></script>
+/>
