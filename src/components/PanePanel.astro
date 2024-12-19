@@ -8,7 +8,10 @@ if (!(id in panels)) return console.error("Invalid!");
 const Panel = panels[id as keyof typeof panels];
 ---
 
-<div class:list={["pane-panel", !inView && "out-of-view"]} data-id={id}>
+<div
+  class:list={["pane-panel", inView === "false" && "out-of-view"]}
+  data-id={id}
+>
   {<Panel embeddables={embeddables} /> || <p>Pane not found</p>}
 </div>
 
@@ -16,11 +19,59 @@ const Panel = panels[id as keyof typeof panels];
   .pane-panel {
     position: absolute;
     resize: both;
-    overflow: auto;
+    overflow: hidden;
     top: 0;
     padding: 20px;
     opacity: 1;
-    transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1) all, 0.1s linear opacity;
+    transition: 1s
+        linear(
+          0,
+          0.00144,
+          0.123,
+          0.318,
+          0.543,
+          0.762,
+          0.951,
+          1.1,
+          1.19,
+          1.23,
+          1.24,
+          1.22,
+          1.17,
+          1.12,
+          1.07,
+          1.02,
+          0.983,
+          0.959,
+          0.946,
+          0.943,
+          0.948,
+          0.958,
+          0.97,
+          0.982,
+          0.993,
+          1,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1,
+          1,
+          1,
+          0.998,
+          0.997,
+          0.997,
+          0.997,
+          0.997,
+          0.998,
+          0.999,
+          0.999,
+          1
+        )
+        all,
+      0.1s linear opacity;
     min-width: 400px;
     width: max-content;
     background: var(--background-l2);
@@ -29,8 +80,8 @@ const Panel = panels[id as keyof typeof panels];
   }
 
   .pane-panel.out-of-view {
-    scale: 0.96;
-    translate: 0 -7px;
+    scale: 0.98;
+    translate: 0 -2px;
     opacity: 0;
     pointer-events: none;
   }

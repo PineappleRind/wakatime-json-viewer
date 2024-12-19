@@ -14,7 +14,7 @@ for (const day of json.totals.days) {
 // 😅
 const clientSide = `const ctx = document.querySelector(".alltime-chart").getContext("2d");
     let gradient = ctx.createLinearGradient(0, -100, 0, 300);
-    gradient.addColorStop(0, 'rgba(0, 140,255,1)');   
+    gradient.addColorStop(0, 'rgba(0, 140,255,1)');
     gradient.addColorStop(1, 'rgba(0,140,255,0)');
     let days = ["${days.join(`", "`)}"];
     let totals = ${JSON.stringify(totals)};
@@ -37,8 +37,8 @@ const clientSide = `const ctx = document.querySelector(".alltime-chart").getCont
       chart.data.labels = intervalDays;
       chart.update();
     }
-    
-    const data = { 
+
+    const data = {
         labels: days,
         datasets: [
             {
@@ -52,7 +52,7 @@ const clientSide = `const ctx = document.querySelector(".alltime-chart").getCont
             }
         ],
     }
-    
+
     const chart = new Chart(ctx, {
         data,
         type: "line",

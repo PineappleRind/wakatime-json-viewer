@@ -3,7 +3,6 @@ import KeyVal from "../components/KeyVal.astro";
 import AllTimeGraph from "./AllTime/AllTimeGraph.astro";
 
 const { embeddables } = Astro.props;
-console.log(embeddables);
 /**
  * Translates seconds into human readable format of seconds, minutes, hours, days, and years
  *
@@ -43,9 +42,7 @@ for (const day of embeddables.totals.days) {
 ---
 
 <h1>All-Time Statistics</h1>
-<p>since {new Date(embeddables.days?.[0].date).toLocaleDateString()}</p>
-<br />
-<KeyVal key="Time Spent Coding" value={forHumans(Math.round(totalTimeSpent))} />
+<KeyVal key="Total Time Spent" value={forHumans(Math.round(totalTimeSpent))} />
 <KeyVal
   key="Range"
   value={`${embeddables.totals.human_readable_range.replace(

@@ -1,0 +1,76 @@
+---
+const { name, embeddables, component, otherThreshold = 0.1 } = Astro.props;
+type Component = {
+  name: string;
+  percent: number;
+  color: string;
+};
+let { data }: { data: Component[] } = embeddables[component];
+
+// coalesce data into Other
+console.log(name, otherThreshold);
+const breakpointIndex = data.findIndex((l) => l.percent < otherThreshold);
+data.splice(breakpointIndex);
+const totalPercent = data.reduce(
+  (acc: number, cur: Component) => (acc += cur.percent),
+  0
+);
+
+data.splice(
+  data.findIndex((l) => l.name === "Other"),
+  1
+);
+
+data.push({
+  name: "Other",
+  color: "#16ce40",
+  percent: 100 - totalPercent,
+});
+data.sort((a, b) => (a.percent < b.percent ? 1 : -1));
+const components = data.map((l: Component) => l.name);
+const colors = data.map((l: Component) => l.color);
+const percents = data.map((l: Component) => l.percent);
+console.log(components, percents);
+---
+
+<h1>{name}</h1>
+<canvas width="500" class={`${component}-chart`}></canvas>
+
+<script
+  type="module"
+  set:html={`
+
+    const ${component} = {
+        labels: ${JSON.stringify(components)},
+        datasets: [
+            {
+                borderWidth: 0,
+                data: ${JSON.stringify(percents)},
+                backgroundColor: ${JSON.stringify(colors)},
+                hoverOffset: 20,
+            }
+        ],
+    }
+
+    const chart = new Chart(document.querySelector(".${component}-chart").getContext("2d"), {
+        data: ${component},
+        type: "pie",
+        options: {
+          plugins: {
+            tooltip: {
+              enabled: true,
+              intersect: false,
+              mode: 'point',
+              callbacks: {
+                title: () => "",
+                label: (item) => {
+                  return item.label + ": " + item.parsed + '%';
+                }
+              },
+              caretSize: 0,
+            }
+          }
+        }
+    })
+`}
+/>

@@ -27,8 +27,18 @@ Visualize JSON data exported from WakaTime
 1. Click "Get Embeddable Code"
 1. Select the `url` _only_, as shown:
    ![Your Embeddable URL](step5.png)
-1. In `public/config.json`, fill the "activity" field with your URL
+1. In `public/config.json`, fill the "totals" field with your URL
 1. Repeat steps 3-6, using the chart types "Languages" and "Operating Systems", filling in the corresponding fields in `public/config.json` with the URLs
+  - "langs" for languages, "oses" for operating systems, and "editors" for editors
+1. You should end up with something like
+    ```json
+    {
+      "totals": "https://wakatime.com/share/@user/long-name.json",
+      "langs": "https://wakatime.com/share/@user/long-name.json",
+      "oses": "https://wakatime.com/share/@user/long-name.json",
+      "editors": "https://wakatime.com/share/@user/long-name.json",
+    }
+    ```
 
 ---
 

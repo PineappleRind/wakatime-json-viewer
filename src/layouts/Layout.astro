@@ -57,13 +57,18 @@ const { title } = Astro.props;
     align-items: center;
     justify-content: center;
     padding: 20px;
+    user-select: none;
   }
 
-  h1, h2 {
+  h1,
+  h2 {
     color: var(--text-loud);
+    margin-block: 0.4rem;
+    margin-block-start: 0.3rem;
   }
 
-  p, dim {
+  p,
+  dim {
     color: var(--text-medium);
   }
 
@@ -93,4 +98,5 @@ const { title } = Astro.props;
   }
 </style>
 
-<script src="https://unpkg.com/chart.js@4.1.0/dist/chart.umd.js"></script>
+<script is:inline src="https://unpkg.com/chart.js@4.1.0/dist/chart.umd.js"
+></script>

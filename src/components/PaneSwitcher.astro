@@ -1,15 +1,37 @@
 ---
 import PanePanel from "./PanePanel.astro";
 const { embeddables } = Astro.props;
+
+const panes = [
+  { id: "alltime", name: "All-time Stats" },
+  { id: "languages", name: "Languages" },
+  { id: "editors", name: "Editors" },
+  // { id: "oses", name: "Operating Systems" },
+];
 ---
 
 <div class="pane-triggers">
-  <div class="pane-trigger active" data-id="alltime">All-time Stats</div>
-  <div class="pane-trigger" data-id="languages">Languages</div>
+  {
+    panes.map((p, i) => (
+      <div
+        class:list={["pane-trigger", i === 0 ? "active" : ""]}
+        data-id={p.id}
+      >
+        {p.name}
+      </div>
+    ))
+  }
 </div>
 <div class="pane-panels">
-  <PanePanel embeddables={embeddables} inView id="alltime" />
-  <PanePanel embeddables={embeddables} id="languages" />
+  {
+    panes.map((p, i) => (
+      <PanePanel
+        embeddables={embeddables}
+        inView={i === 0 ? "true" : "false"}
+        id={p.id}
+      />
+    ))
+  }
 </div>
 
 <script>
@@ -58,7 +80,6 @@ const { embeddables } = Astro.props;
     border-radius: 40px;
     color: var(--text-quiet);
     cursor: pointer;
-    width: 150px;
     text-align: center;
     transition: 0.2s;
   }
