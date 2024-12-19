@@ -1,5 +1,5 @@
 # no data leaks please
-# public/config.json
+public/config.json
 
 # build output
 dist/
