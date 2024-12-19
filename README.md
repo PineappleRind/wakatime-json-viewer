@@ -29,7 +29,7 @@ Visualize JSON data exported from WakaTime
    ![Your Embeddable URL](step5.png)
 1. In `public/config.json`, fill the "totals" field with your URL
 1. Repeat steps 3-6, using the chart types "Languages" and "Operating Systems", filling in the corresponding fields in `public/config.json` with the URLs
-  - "langs" for languages, "oses" for operating systems, and "editors" for editors
+    - "langs" for languages, "oses" for operating systems, and "editors" for editors
 1. You should end up with something like
     ```json
     {
@@ -42,6 +42,6 @@ Visualize JSON data exported from WakaTime
 
 ---
 
-Feel free to open an issue on _anything_ you want (that's at least somewhat related to this project. so don't open an issue on how bad store-bought hummus is)
+Feel free to open an issue on _anything_ you want (that's at least somewhat related to this project. so don't open an issue on how groundbreaking tape was as an invention)
 
 _Version: 0.1_
